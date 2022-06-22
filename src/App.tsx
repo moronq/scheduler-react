@@ -1,26 +1,21 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import { FC } from 'react'
+import { Navigate, Route, Routes } from 'react-router-dom'
+import './App.css'
+import LayoutRouter from './components/LayoutRouter'
+import Login from './pages/Login'
+import Event from './pages/Event'
 
-function App() {
+const App: FC = () => {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+    <Routes>
+      <Route path="/" element={<LayoutRouter />}>
+        <Route path="login" element={<Login />} />
+        <Route path="event" element={<Event />} />
+        <Route path="*" element={<Navigate to={'/event'} replace />} />
+        <Route path="/" element={<Navigate to={'/event'} replace />} />
+      </Route>
+    </Routes>
+  )
 }
 
-export default App;
+export default App
