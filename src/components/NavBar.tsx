@@ -10,23 +10,21 @@ const NavBar: FC = () => {
   return (
     <Header>
       <Row justify="end">
+        {isAuth && <span style={{ color: 'white' }}>user name</span>}
         <Col span={4}>
           {isAuth ? (
             <Menu
               theme="dark"
               mode="horizontal"
               selectable={false}
-              items={[
-                //   { key: 1, label: 'User name', disabled: true },
-                { key: 2, label: 'Log out' },
-              ]}
+              items={[{ key: 'logout', label: 'Log out' }]}
             />
           ) : (
             <Menu
               theme="dark"
               mode="horizontal"
               selectable={false}
-              items={[{ key: 3, label: <Link to={'login'}>Login</Link> }]}
+              items={[{ key: 'login', label: <Link to={'login'}>Login</Link> }]}
             />
           )}
         </Col>
