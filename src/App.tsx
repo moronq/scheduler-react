@@ -6,7 +6,7 @@ import { useAppDispatch, useAppSelector } from './hooks/hook'
 import Event from './pages/Event'
 import Login from './pages/Login'
 import { setAuth, setUser } from './store/slices/authSlice'
-import { UserType } from './types/UserTypes'
+import { UserType } from './types/UserType'
 
 const App: FC = () => {
   const { isAuth } = useAppSelector((state) => state.auth)

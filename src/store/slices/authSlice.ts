@@ -1,7 +1,6 @@
 import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit'
-import { BaseThunkAPI } from '@reduxjs/toolkit/dist/createAsyncThunk'
 import axios from 'axios'
-import { UserType } from '../../types/UserTypes'
+import { UserType } from '../../types/UserType'
 
 export type authState = {
   isAuth: boolean

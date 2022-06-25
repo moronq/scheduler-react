@@ -1,8 +1,7 @@
-import { Input, Form, Button } from 'antd'
-import React, { FC, useState } from 'react'
+import { Button, Form, Input } from 'antd'
+import { FC, useState } from 'react'
 import { useAppDispatch, useAppSelector } from '../hooks/hook'
 import { login } from '../store/slices/authSlice'
-import { UserType } from '../types/UserTypes'
 import { rules } from '../utils/rules'
 
 const LoginForm: FC = () => {
