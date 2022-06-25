@@ -1,19 +1,26 @@
 import { Col, Menu, Row } from 'antd'
 import { Header } from 'antd/lib/layout/layout'
-import React, { FC } from 'react'
+import { FC } from 'react'
 import { Link } from 'react-router-dom'
-import { useAppSelector } from '../hook/hook'
+import { useAppDispatch, useAppSelector } from '../hooks/hook'
+import { logout } from '../store/slices/authSlice'
 
 const NavBar: FC = () => {
-  const { isAuth } = useAppSelector((state) => state.auth)
+  const { isAuth, user } = useAppSelector((state) => state.auth)
+  const dispatch = useAppDispatch()
 
   return (
     <Header>
       <Row justify="end">
-        {isAuth && <span style={{ color: 'white' }}>user name</span>}
+        {isAuth && (
+          <span style={{ color: 'white', marginRight: '15px' }}>
+            {user.username}{' '}
+          </span>
+        )}
         <Col span={4}>
           {isAuth ? (
             <Menu
+              onClick={() => dispatch(logout())}
               theme="dark"
               mode="horizontal"
               selectable={false}

@@ -7,29 +7,34 @@ export type authState = {
   isAuth: boolean
   user: UserType
   isLoading: boolean
-  error: string
+  error: string | null
 }
 
 const initialState: authState = {
   isAuth: false,
   user: {} as UserType,
   isLoading: false,
-  error: '',
+  error: null,
 }
 
 export const login = createAsyncThunk(
   'auth/login',
   async (user: UserType, thunkAPI) => {
+    await new Promise((r) => setTimeout(r, 1000))
     try {
-      let mockUser
-      return await axios
-        .get<Array<UserType>>('./users.json').then(res=>{
-          return mockUser = res.data.find(
-            (u) => u.username === user.username && u.password === user.password
-          )
-        })
+      const response = await axios
+        .get<Array<UserType>>('users.json')
+        .then((res) => res.data)
+      const mockUser = response.find(
+        (u) => u.username == user.username && u.password == user.password
+      )
+      if (mockUser) {
+        return mockUser
+      } else {
+        return thunkAPI.rejectWithValue('Неверный логин или пароль')
+      }
     } catch (e) {
-      thunkAPI.rejectWithValue('Не удалось войти =(')
+      return thunkAPI.rejectWithValue('Ошибка при входе')
     }
   }
 )
@@ -52,28 +57,32 @@ export const authSlice = createSlice({
       state.error = action.payload
       state.isLoading = false
     },
+    logout: (state) => {
+      localStorage.removeItem('auth')
+      localStorage.removeItem('user')
+      state.user = {} as UserType
+      state.isAuth = false
+    },
   },
   extraReducers: {
     [login.pending.type]: (state) => {
       state.isLoading = true
-      state.error = ''
+      state.error = null
     },
-    [login.fulfilled.type]: (state, action: PayloadAction<<UserType>) => {
-      console.log(action.payload)
-      // if (action.payload) {
-      //   localStorage.setItem('auth', 'true')
-      //   localStorage.setItem('user', action.payload.username)
-      //   state.isAuth = true
-      //   state.user = action.payload
-      // } else {
-      //   state.error = 'Некорректный логин или пароль'
-      // }
+    [login.fulfilled.type]: (state, action: PayloadAction<UserType>) => {
+      state.isLoading = false
+      localStorage.setItem('auth', 'true')
+      localStorage.setItem('user', action.payload.username)
+      state.isAuth = true
+      state.user = action.payload
     },
-    [login.rejected.type]: (state) => {
-      state.error = 'Произошла ошибка при логине'
+    [login.rejected.type]: (state, action: PayloadAction<string>) => {
+      state.isLoading = false
+      state.error = action.payload
     },
   },
 })
 
-export const { setAuth, setUser, setError, setIsLoading } = authSlice.actions
+export const { setAuth, setUser, setError, setIsLoading, logout } =
+  authSlice.actions
 export default authSlice.reducer
