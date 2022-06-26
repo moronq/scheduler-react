@@ -1,15 +1,21 @@
 import { DatePicker, Form, Input, Select, Button, Row } from 'antd'
-import { eventNames } from 'process'
 import React, { FC, useState } from 'react'
+import { Moment } from 'moment'
 import { EventsType } from '../types/EventsType'
 import { UserType } from '../types/UserType'
 import { rules } from '../utils/rules'
+import { formatDate } from '../utils/formatDate'
+import { isConstructorDeclaration } from 'typescript'
+import { useAppSelector } from '../hooks/hook'
 
 type EventFormProps = {
   guests: Array<UserType>
+  submit: (event: EventsType) => void
 }
 
-const EventForm: FC<EventFormProps> = ({ guests }) => {
+const EventForm: FC<EventFormProps> = ({ guests, submit }) => {
+  const { user } = useAppSelector((state) => state.auth)
+
   const [event, setEvent] = useState({
     author: '',
     date: '',
@@ -17,8 +23,19 @@ const EventForm: FC<EventFormProps> = ({ guests }) => {
     guest: 'fdfg',
   } as EventsType)
 
+  const selectDate = (date: Moment | null) => {
+    if (date) {
+      setEvent({ ...event, date: formatDate(date?.toDate()) })
+    }
+  }
+
+  const submitForm = () => {
+    submit({ ...event, author: user.username })
+    console.log({ ...event, author: user.username })
+  }
+
   return (
-    <Form>
+    <Form onFinish={submitForm}>
       <Form.Item
         label="Добавить событие"
         name="description"
@@ -31,7 +48,10 @@ const EventForm: FC<EventFormProps> = ({ guests }) => {
         />
       </Form.Item>
       <Form.Item label="Выбрать дату" name="date" rules={[rules.required()]}>
-        <DatePicker placeholder={'Выбрать дату'} />
+        <DatePicker
+          placeholder={'Выбрать дату'}
+          onChange={(date) => selectDate(date)}
+        />
       </Form.Item>
       <Form.Item
         label="Выбрать участника"

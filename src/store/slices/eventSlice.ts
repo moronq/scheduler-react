@@ -6,11 +6,13 @@ import { usersAPI } from '../../api/usersAPI'
 type initialStateType = {
   guests: Array<UserType>
   events: Array<EventsType>
+  error: string | null
 }
 
 const initialState: initialStateType = {
   guests: [],
   events: [],
+  error: null,
 }
 
 export const fetchGuests = createAsyncThunk(
@@ -37,11 +39,17 @@ export const eventSlice = createSlice({
     },
   },
   extraReducers: {
+    [fetchGuests.pending.type]: (state) => {
+      state.error = null
+    },
     [fetchGuests.fulfilled.type]: (
       state,
       action: PayloadAction<Array<UserType>>
     ) => {
       state.guests = action.payload
+    },
+    [fetchGuests.rejected.type]: (state, action: PayloadAction<string>) => {
+      state.error = action.payload
     },
   },
 })
