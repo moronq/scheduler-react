@@ -1,5 +1,6 @@
 import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit'
 import axios from 'axios'
+import { usersAPI } from '../../api/usersAPI'
 import { UserType } from '../../types/UserType'
 
 export type authState = {
@@ -21,9 +22,7 @@ export const login = createAsyncThunk(
   async (user: UserType, thunkAPI) => {
     await new Promise((r) => setTimeout(r, 1000))
     try {
-      const response = await axios
-        .get<Array<UserType>>('users.json')
-        .then((res) => res.data)
+      const response = await usersAPI.getUsers()
       const mockUser = response.find(
         (u) => u.username == user.username && u.password == user.password
       )

@@ -1,8 +1,22 @@
-import { Form, Input } from 'antd'
-import React from 'react'
+import { DatePicker, Form, Input, Select, Button, Row } from 'antd'
+import { eventNames } from 'process'
+import React, { FC, useState } from 'react'
+import { EventsType } from '../types/EventsType'
+import { UserType } from '../types/UserType'
 import { rules } from '../utils/rules'
 
-const EventForm = () => {
+type EventFormProps = {
+  guests: Array<UserType>
+}
+
+const EventForm: FC<EventFormProps> = ({ guests }) => {
+  const [event, setEvent] = useState({
+    author: '',
+    date: '',
+    description: '',
+    guest: 'fdfg',
+  } as EventsType)
+
   return (
     <Form>
       <Form.Item
@@ -10,7 +24,37 @@ const EventForm = () => {
         name="description"
         rules={[rules.required()]}
       >
-        <Input autoComplete={'off'} />
+        <Input
+          autoComplete={'off'}
+          value={event.description}
+          onChange={(e) => setEvent({ ...event, description: e.target.value })}
+        />
+      </Form.Item>
+      <Form.Item label="Выбрать дату" name="date" rules={[rules.required()]}>
+        <DatePicker placeholder={'Выбрать дату'} />
+      </Form.Item>
+      <Form.Item
+        label="Выбрать участника"
+        name="guest"
+        rules={[rules.required()]}
+      >
+        <Select onChange={(guest: string) => setEvent({ ...event, guest })}>
+          {guests.map((el) => {
+            return (
+              <Select.Option key={el.username} value={el.username}>
+                {el.username}
+              </Select.Option>
+            )
+          })}
+        </Select>
+      </Form.Item>
+
+      <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
+        <Row justify="end">
+          <Button type="primary" htmlType="submit">
+            Создать
+          </Button>
+        </Row>
       </Form.Item>
     </Form>
   )
