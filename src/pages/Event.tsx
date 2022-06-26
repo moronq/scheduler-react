@@ -3,14 +3,14 @@ import React, { FC, useEffect, useState } from 'react'
 import EventCalendar from '../components/EventCalendar'
 import EventForm from '../components/EventForm'
 import { useAppDispatch, useAppSelector } from '../hooks/hook'
-import { fetchGuests } from '../store/slices/eventSlice'
+import { createEvent, fetchGuests } from '../store/slices/eventSlice'
 
 const Event: FC = () => {
   const [modalVisible, setModalVisible] = useState(false)
 
   const dispatch = useAppDispatch()
 
-  const { guests } = useAppSelector((state) => state.events)
+  const { guests, events } = useAppSelector((state) => state.events)
 
   useEffect(() => {
     dispatch(fetchGuests())
@@ -18,6 +18,7 @@ const Event: FC = () => {
 
   return (
     <Layout>
+      {JSON.stringify(events)}
       <Row justify="center">
         <Col span={22}>
           <EventCalendar events={[]} />
@@ -33,7 +34,10 @@ const Event: FC = () => {
           onCancel={() => setModalVisible(false)}
           footer={null}
         >
-          <EventForm guests={guests} />
+          <EventForm
+            guests={guests}
+            submit={(event) => dispatch(createEvent(event))}
+          />
         </Modal>
       </Row>
     </Layout>

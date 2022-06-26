@@ -27,6 +27,20 @@ export const fetchGuests = createAsyncThunk(
   }
 )
 
+export const createEvent = createAsyncThunk(
+  'events/createEvent',
+  async (event: EventsType, thunkAPI) => {
+    try {
+      const events = localStorage.getItem('events') || '[]'
+      const json = JSON.parse(events) as Array<EventsType>
+      json.push(event)
+      return json
+    } catch (e) {
+      return thunkAPI.rejectWithValue('Ошибка при создании события')
+    }
+  }
+)
+
 export const eventSlice = createSlice({
   name: 'events',
   initialState,
@@ -49,6 +63,20 @@ export const eventSlice = createSlice({
       state.guests = action.payload
     },
     [fetchGuests.rejected.type]: (state, action: PayloadAction<string>) => {
+      state.error = action.payload
+    },
+    [createEvent.pending.type]: (state) => {
+      state.error = null
+    },
+    [createEvent.fulfilled.type]: (
+      state,
+      action: PayloadAction<Array<EventsType>>
+    ) => {
+      state.events = action.payload
+      debugger
+      localStorage.setItem('events', JSON.stringify(state.events))
+    },
+    [createEvent.rejected.type]: (state, action: PayloadAction<string>) => {
       state.error = action.payload
     },
   },

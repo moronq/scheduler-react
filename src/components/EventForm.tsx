@@ -1,12 +1,11 @@
-import { DatePicker, Form, Input, Select, Button, Row } from 'antd'
-import React, { FC, useState } from 'react'
+import { Button, DatePicker, Form, Input, Row, Select } from 'antd'
 import { Moment } from 'moment'
+import { FC, useState } from 'react'
+import { useAppDispatch, useAppSelector } from '../hooks/hook'
 import { EventsType } from '../types/EventsType'
 import { UserType } from '../types/UserType'
-import { rules } from '../utils/rules'
 import { formatDate } from '../utils/formatDate'
-import { isConstructorDeclaration } from 'typescript'
-import { useAppSelector } from '../hooks/hook'
+import { rules } from '../utils/rules'
 
 type EventFormProps = {
   guests: Array<UserType>
@@ -15,6 +14,7 @@ type EventFormProps = {
 
 const EventForm: FC<EventFormProps> = ({ guests, submit }) => {
   const { user } = useAppSelector((state) => state.auth)
+  const dispatch = useAppDispatch()
 
   const [event, setEvent] = useState({
     author: '',
@@ -25,13 +25,12 @@ const EventForm: FC<EventFormProps> = ({ guests, submit }) => {
 
   const selectDate = (date: Moment | null) => {
     if (date) {
-      setEvent({ ...event, date: formatDate(date?.toDate()) })
+      setEvent({ ...event, date: formatDate(date.toDate()) })
     }
   }
 
   const submitForm = () => {
     submit({ ...event, author: user.username })
-    console.log({ ...event, author: user.username })
   }
 
   return (
