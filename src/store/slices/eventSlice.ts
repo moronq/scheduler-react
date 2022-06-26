@@ -41,6 +41,22 @@ export const createEvent = createAsyncThunk(
   }
 )
 
+export const fetchEvents = createAsyncThunk(
+  'events/fetchEbents',
+  async (username: string, thunkAPI) => {
+    try {
+      const events = localStorage.getItem('events') || '[]'
+      const json = JSON.parse(events) as Array<EventsType>
+      const currentEvents = json.filter(
+        (el) => el.author === username || el.guest === username
+      )
+      return currentEvents
+    } catch (e) {
+      return thunkAPI.rejectWithValue('Ошибка при загрузке событий')
+    }
+  }
+)
+
 export const eventSlice = createSlice({
   name: 'events',
   initialState,
@@ -73,10 +89,21 @@ export const eventSlice = createSlice({
       action: PayloadAction<Array<EventsType>>
     ) => {
       state.events = action.payload
-      debugger
       localStorage.setItem('events', JSON.stringify(state.events))
     },
     [createEvent.rejected.type]: (state, action: PayloadAction<string>) => {
+      state.error = action.payload
+    },
+    [fetchEvents.pending.type]: (state) => {
+      state.error = null
+    },
+    [fetchEvents.fulfilled.type]: (
+      state,
+      action: PayloadAction<Array<EventsType>>
+    ) => {
+      state.events = action.payload
+    },
+    [fetchEvents.rejected.type]: (state, action: PayloadAction<string>) => {
       state.error = action.payload
     },
   },

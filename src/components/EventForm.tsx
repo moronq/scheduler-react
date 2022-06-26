@@ -46,7 +46,14 @@ const EventForm: FC<EventFormProps> = ({ guests, submit }) => {
           onChange={(e) => setEvent({ ...event, description: e.target.value })}
         />
       </Form.Item>
-      <Form.Item label="Выбрать дату" name="date" rules={[rules.required()]}>
+      <Form.Item
+        label="Выбрать дату"
+        name="date"
+        rules={[
+          rules.required(),
+          rules.isDateAfter('Нельзя создать событие в прошлом'),
+        ]}
+      >
         <DatePicker
           placeholder={'Выбрать дату'}
           onChange={(date) => selectDate(date)}
